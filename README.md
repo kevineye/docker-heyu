@@ -16,6 +16,7 @@ Copy `x10config.sample` to `x10.sched.sample` and to `x10.conf` and `x10.sched` 
         -v /your/config/dir:/etc/heyu \
         -v /etc/localtime:/etc/localtime \
         --device /dev/ttyUSB0 \
+        -p 8080:80
         kevineye/heyu
 
 The device can be configured in the `x10.conf` file.

@@ -10,4 +10,35 @@ fi
 heyu engine 1>&2
 heyu upload 1>&2
 heyu setclock 1>&2
+
+getset=$(cat <<'SCRIPT')
+unit_code=$(expr match "$REQUEST_URI" '/\([A-P][01]\{0,1\}[0-9]\)$')
+if [ ! -z "$unit_code" ]; then 
+    if [ "$REQUEST_METHOD" = "GET" ]; then
+        expr $(heyu onstate "$unit_code") > 0 && echo ON || echo OFF
+    elif [ "$REQUEST_METHOD" = "POST" ]; then
+        body=$(cat)
+        if [ "$body" = "ON" ]; then
+            heyu on "$unit_code" 1>&2
+        else
+            heyu off "$unit_code" 1>&2
+        fi
+    fi
+elif [ "$REQUEST_METHOD" = "POST" ]; then
+    house_code=$(expr match "$REQUEST_URI" '/\([A-P]\)$')
+    if [ ! -z "$house_code" ]; then
+        body=$(cat)
+        if [ "$body" = "ON" ]; then
+            heyu allon "$house_code" 1>&2
+        else
+            heyu alloff "$house_code" 1>&2
+        fi
+    fi
+fi
+SCRIPT
+
+shell2http -cgi -no-index -port 80 \
+    /macro/ 'heyu macro "$(expr substr \"$REQUEST_URI\" 8 100 | tr -cd A-Za-z0-9_-)" 1>&2' \
+    / "$getset" &
+
 heyu monitor

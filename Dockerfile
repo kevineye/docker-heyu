@@ -2,6 +2,8 @@ FROM alpine
 MAINTAINER Kevin Eye <kevineye@gmail.com>
 
 RUN apk -U add curl build-base \
+ && curl -fsSL -o /usr/local/bin/forego https://github.com/russmckendrick/forego-docker/releases/download/0.1/forego \
+ && chmod 775 /usr/local/bin/forego \
  && mkdir /build \
  && cd /build \
  && curl -fsSL -O http://github.com/msoap/shell2http/releases/download/1.4/shell2http-1.4.amd64.linux.zip \
@@ -23,6 +25,7 @@ RUN cp -r /etc/heyu /etc/heyu.default \
  && chmod 777 /usr/local/var/lock
 
 VOLUME /etc/heyu
+EXPOSE 80
 
 COPY heyu-run.sh /usr/local/bin/heyu-run
 CMD heyu-run

@@ -30,4 +30,4 @@ If you map port 80, you can query and control heyu via the following web service
  * **POST /{housecode}** - switch all devices of the given house code (e.g. `A`) on or off. POST body must be `ON` or `OFF`. Codes and body are case sensitive.
  * **POST or GET /macro/{name}** - run a macro defined in `x10.sched`.
  
-You may also add some minimal security by supplying the `URL_KEY` environment variable (choose a long, random string), which will prefix the key before each endpoint (e.g. /_<URL_KEY>_/A1).
+You may also add some minimal security by supplying the `URL_KEY` environment variable (choose a long, random string), which will prefix the key before each endpoint (e.g. /_<URL_KEY>_/A1). You will need to use a reverse proxy to add real authentication or SSL.

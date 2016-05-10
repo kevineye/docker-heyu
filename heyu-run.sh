@@ -11,7 +11,19 @@ heyu engine 1>&2
 heyu upload 1>&2
 heyu setclock 1>&2
 
+if [ -z "$URL_KEY" ]; then
+    export prefix="/"
+else
+    export prefix="/$URL_KEY/"
+fi
+
+macro=$(cat <<'SCRIPT')
+REQUEST_URI=$(expr substr "$REQUEST_URI" $(expr length "$prefix") 200)
+heyu macro "$(expr substr \"$REQUEST_URI\" 8 100 | tr -cd A-Za-z0-9_-)" 1>&2
+SCRIPT
+
 getset=$(cat <<'SCRIPT')
+REQUEST_URI=$(expr substr "$REQUEST_URI" $(expr length "$prefix") 200)
 unit_code=$(expr match "$REQUEST_URI" '/\([A-P][01]\{0,1\}[0-9]\)$')
 if [ ! -z "$unit_code" ]; then 
     if [ "$REQUEST_METHOD" = "GET" ]; then
@@ -37,8 +49,8 @@ elif [ "$REQUEST_METHOD" = "POST" ]; then
 fi
 SCRIPT
 
-shell2http -cgi -no-index -port 80 \
-    /macro/ 'heyu macro "$(expr substr \"$REQUEST_URI\" 8 100 | tr -cd A-Za-z0-9_-)" 1>&2' \
-    / "$getset" &
+shell2http -cgi -no-index -port 80 -export-vars 'prefix' \
+    "${prefix}macro/" "$macro" \
+    "$prefix" "$getset" &
 
 heyu monitor

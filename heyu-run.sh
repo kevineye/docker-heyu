@@ -31,7 +31,7 @@ echo
 unit_code=$(expr match "$REQUEST_URI" '/\([A-P][01]\{0,1\}[0-9]\)$')
 if [ ! -z "$unit_code" ]; then 
     if [ "$REQUEST_METHOD" = "GET" ]; then
-        expr $(heyu onstate "$unit_code") > 0 && echo ON || echo OFF
+        if [ "$(heyu onstate "$unit_code")" '>' 0 ]; then echo ON; else echo OFF; fi
     elif [ "$REQUEST_METHOD" = "POST" ]; then
         body=$(cat)
         if [ "$body" = "ON" ]; then

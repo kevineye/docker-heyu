@@ -19,11 +19,15 @@ fi
 
 macro=$(cat <<'SCRIPT')
 REQUEST_URI=$(expr substr "$REQUEST_URI" $(expr length "$prefix") 200)
+echo "Access-Control-Allow-Origin: *"
+echo
 heyu macro "$(expr substr \"$REQUEST_URI\" 8 100 | tr -cd A-Za-z0-9_-)" 1>&2
 SCRIPT
 
 getset=$(cat <<'SCRIPT')
 REQUEST_URI=$(expr substr "$REQUEST_URI" $(expr length "$prefix") 200)
+echo "Access-Control-Allow-Origin: *"
+echo
 unit_code=$(expr match "$REQUEST_URI" '/\([A-P][01]\{0,1\}[0-9]\)$')
 if [ ! -z "$unit_code" ]; then 
     if [ "$REQUEST_METHOD" = "GET" ]; then
